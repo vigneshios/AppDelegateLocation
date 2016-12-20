@@ -9,17 +9,26 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    lazy var interpreter: Interpreter = Interpreter(for: self)
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
 
+    @IBOutlet weak var displayLabel: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        requestLocationUpdateAuthorization()
+        interpreter.viewDidLoad()
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func updateLabel(with message: String) {
+        displayLabel.text = message
     }
-
+    
+    func requestLocationUpdateAuthorization() {
+        appDelegate.locationManager.requestAlwaysAuthorization()
+    }
 
 }
 
