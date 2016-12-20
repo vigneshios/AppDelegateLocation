@@ -8,26 +8,25 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+protocol ViewControllerProtocol {
     
-    lazy var interpreter: Interpreter = Interpreter(for: self)
-    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    func updateLabel(with message: String)
+    
+}
+
+class ViewController: UIViewController, ViewControllerProtocol {
+    
+    lazy var interpreter: Interpreter = Interpreter(for: self, appDelegate: UIApplication.shared.delegate as! AppDelegate)
 
     @IBOutlet weak var displayLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        requestLocationUpdateAuthorization()
         interpreter.viewDidLoad()
     }
 
     func updateLabel(with message: String) {
         displayLabel.text = message
-    }
-    
-    func requestLocationUpdateAuthorization() {
-        appDelegate.locationManager.requestAlwaysAuthorization()
     }
 
 }

@@ -15,14 +15,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     var window: UIWindow?
     
     let appData = AppData.shared
+    var currentInterpreter: GeneralInterpretProtocol? = nil
     
-    var locationManager: CLLocationManager {
-        let manager = CLLocationManager()
-        manager.delegate = self
-        manager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
-        manager.allowsBackgroundLocationUpdates = true
-        return manager
-    }
+    lazy var locationManager: CLLocationManager = {
+        let m = CLLocationManager()
+        m.delegate = self
+        m.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        m.allowsBackgroundLocationUpdates = true
+        return m
+    }()
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -38,10 +39,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        print("\nLocation updates are paused")
+        locationManager.stopUpdatingLocation()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+        print("\nLocation updates are restarted")
+        locationManager.startUpdatingLocation()
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
@@ -60,8 +65,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         
         let latitude = location.coordinate.latitude
         let longitude = location.coordinate.longitude
+        let locationObject = Location(latitude: latitude, longitude: longitude)
         
-        appData.updateUserLocation(to: Location(latitude: latitude, longitude: longitude))
+        guard let interpreter = currentInterpreter else { return }
+        interpreter.locationUpdated(locationObject)
         
     }
     
@@ -75,6 +82,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             manager.startUpdatingLocation()
         }
         
+    }
+    
+    func registerCurrentInterpreterForLocationUpdates(_ interpreter: GeneralInterpretProtocol) {
+        self.currentInterpreter = interpreter
     }
 
 

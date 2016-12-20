@@ -17,7 +17,7 @@ class Presenter {
     }
     
     func display(message: String) {
-        
+        mainVC?.updateLabel(with: message)
     }
     
 }

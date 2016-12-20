@@ -12,8 +12,8 @@ class Logic {
     
     let appData = AppData.shared
     
-    func getLocation() -> Location? {
-        return appData.getUserLocation()
+    func saveUpdatedLocation(_ location: Location) {
+        appData.updateUserLocation(to: location)
     }
     
 }
